@@ -1,0 +1,61 @@
+import csv
+
+def stock_portfolio_tracker():
+    #Hardcoded stock prices dictionary
+    stock_prices = {
+        "AAPL": 180,
+        "TSLA": 250,
+        "MSFT": 320,
+        "GOOGL": 140,
+        "AMZN": 170
+    }
+
+    portfolio = {}  # To store user input (stock: quantity)
+
+    print("📈 Welcome to Stock Portfolio Tracker!")
+    print("Available stocks:", ", ".join(stock_prices.keys()))
+
+    # User input loop
+    while True:
+        stock = input("Enter stock symbol (or 'done' to finish): ").upper()
+        if stock == "DONE":
+            break
+        if stock not in stock_prices:
+            print("⚠️ Stock not found in list. Try again.")
+            continue
+
+        try:
+            quantity = int(input(f"Enter quantity of {stock}: "))
+        except ValueError:
+            print("⚠️ Please enter a valid number.")
+            continue
+
+        # Add to portfolio
+        if stock in portfolio:
+            portfolio[stock] += quantity
+        else:
+            portfolio[stock] = quantity
+
+    # Calculate total investment
+    total_value = 0
+    print("\n💼 Your Portfolio Summary:")
+    for stock, qty in portfolio.items():
+        value = stock_prices[stock] * qty
+        total_value += value
+        print(f"{stock}: {qty} shares × ${stock_prices[stock]} = ${value}")
+
+    print(f"\n📊 Total Investment Value = ${total_value}")
+
+    # Optional file saving
+    save_choice = input("Do you want to save portfolio to file? (y/n): ").lower()
+    if save_choice == "y":
+        # Save as CSV
+        with open("portfolio.csv", "w", newline="") as file:
+            writer = csv.writer(file)
+            writer.writerow(["Stock", "Quantity", "Price", "Value"])
+            for stock, qty in portfolio.items():
+                writer.writerow([stock, qty, stock_prices[stock], stock_prices[stock] * qty])
+            writer.writerow(["TOTAL", "", "", total_value])
+        print("✅ Portfolio saved to portfolio.csv")
+
+stock_portfolio_tracker()
